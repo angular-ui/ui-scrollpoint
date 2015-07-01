@@ -31,5 +31,12 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/angular-ui/ui-scrollpoint.git"
-  }
+  },
+  "keywords": [
+    "angular",
+    "angular-ui",
+    "scroll",
+    "scrollpoint",
+    "scrollfix"
+  ]
 }
