@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="demo">
+    <head>
+        <meta charset="utf-8">
+        <title>AngularJS ui-scrollpoint</title>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular.js"></script>
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css">
+
+        <!-- ui-scrollpoint files -->
+        <script src="../dist/scrollpoint.js"></script>
+        <script>
+            var app = angular.module('demo', ['ui.scrollpoint']);
+        </script>
+        <style>
+            body {min-height: 1500px;}
+            div.ui-scrollpoint {
+                background: yellow;
+            }
+            p.ui-scrollpoint {
+                background: lightgreen;
+            }
+        </style>
+    </head>
+
+    <body class="container">
+        <section id="scrollpoint">
+            <div class="page-header">
+                <h1>Scrollpoint</h1>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>What?</h3>
+
+                    <p>Add a 'ui-fixed' class to elements when the page scrolls past them</p>
+
+                    <div id="scrollExample" class="well" ui-scrollpoint="+100">
+                        <p ui-scrollpoint>They see me scrollin...</p>
+                        <p ui-scrollpoint>They see me scrollin...</p>
+                        <p ui-scrollpoint>They see me scrollin...</p>
+                        <p ui-scrollpoint>They see me scrollin...</p>
+                        <p ui-scrollpoint>They see me scrollin...</p>
+                        <p ui-scrollpoint="-100">offest: -100</p>
+                        <p ui-scrollpoint="+100">offest: +100</p>
+                        Try scrolling past this line and see effect on above lines...
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h3>Why?</h3>
+
+                    <p>Make elements sticky, or simply appear different after scrolling past a certain point</p>
+
+                    <p class="alert alert-info"><i class="icon-info-sign"></i> Remember that this directive
+                        <strong>only</strong> adds a
+                        <code>ui-scrollpoint</code> class to the element. It is up to you to add the corresponding CSS rules, however it also gives you the ability to add other rules instead if you prefer.
+                    </p>
+                </div>
+            </div>
+
+            <h3>How?</h3>
+            <pre class="prettyprint">&lt;p ui-scrollpoint&gt;They see me scrollin...&lt;/p&gt;</pre>
+            <p>You can optionally pass a number to
+                <code>ui-scrollpoint</code> which would override the detected y-offset of the element. Values can be either absolute
+                <code>600</code> or offset from the calculated value <code>-50</code> or <code>+100</code>.</p>
+        </section>
+    </body>
+</html>
