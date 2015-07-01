@@ -1,6 +1,6 @@
 # ui-scrollpoint [![Build Status](https://travis-ci.org/angular-ui/ui-scrollpoint.svg?branch=master)](https://travis-ci.org/angular-ui/ui-scrollpoint)
 
-Provides an easy way to toggle a checkbox input's special 'scrollpoint' property. This is a visual toggle only and in no way affects the model or value outside of native browser behavior at this time.
+Add a 'ui-scrollpoint' class to elements when the page scrolls past them.
 
 ## Requirements
 
