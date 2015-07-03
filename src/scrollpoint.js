@@ -51,6 +51,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                 }
 
                 $target.on('scroll', onScroll);
+                onScroll(); // sets the initial state
 
                 // Unbind scroll event handler when directive is removed
                 scope.$on('$destroy', function() {
