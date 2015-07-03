@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 1.0.0 - 2015-07-03T02:58:59.685Z
+ * Version: 1.0.1 - 2015-07-03T03:01:23.641Z
  * License: MIT
  */
 
