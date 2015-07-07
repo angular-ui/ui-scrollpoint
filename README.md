@@ -19,7 +19,7 @@ Load the script files in your application:
 
 ```html
 <script type="text/javascript" src="bower_components/angular/angular.js"></script>
-<script type="text/javascript" src="bower_components/angular-ui-scrollpoint/ui-scrollpoint.js"></script>
+<script type="text/javascript" src="bower_components/angular-ui-scrollpoint/dist/ui-scrollpoint.js"></script>
 ```
 
 Add the specific module to your dependencies:
