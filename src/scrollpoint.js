@@ -50,6 +50,14 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                     }
                 }
 
+                function reset() {
+                    elm.removeClass('ui-scrollpoint');
+                    fixLimit = absolute ? attrs.uiScrollpoint : elm[0].offsetTop + shift;
+                    onScroll();
+                }
+
+                scope.$on('scrollpointShouldReset', reset);
+
                 $target.on('scroll', onScroll);
                 onScroll(); // sets the initial state
 
