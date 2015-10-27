@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 1.0.1 - 2015-07-03T03:01:23.641Z
+ * Version: 1.0.1 - 2015-10-16T14:30:35.778Z
  * License: MIT
  */
 
@@ -59,6 +59,14 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                         elm.removeClass('ui-scrollpoint');
                     }
                 }
+
+                function reset() {
+                    elm.removeClass('ui-scrollpoint');
+                    fixLimit = absolute ? attrs.uiScrollpoint : elm[0].offsetTop + shift;
+                    onScroll();
+                }
+
+                scope.$on('scrollpointShouldReset', reset);
 
                 $target.on('scroll', onScroll);
                 onScroll(); // sets the initial state
