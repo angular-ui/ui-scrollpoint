@@ -61,6 +61,11 @@
                     </p>
                 </div>
             </div>
+            <h3>How?</h3>
+            <pre class="prettyprint">&lt;p ui-scrollpoint&gt;They see me scrollin...&lt;/p&gt;</pre>
+            <p>You can optionally pass a number to
+                <code>ui-scrollpoint</code> which would override the detected y-offset of the element. Values can be either absolute
+                <code>600</code> or offset from the calculated value <code>-50</code> or <code>+100</code>.</p>
             <div class="row">
                 <div class="col-md-6" ng-controller="scrollpointTest">
                     <h3>A scrollpoint with a target set on a parent scrollable div</h3>
@@ -105,12 +110,37 @@
                     </p>
                 </div>
             </div>
+            <div class="row" ng-init="scrollpoint = 30">
+                <div class="col-md-12">
+                    <h3>Using a variable</h3>
+                    <div class="well" style="height:200px;overflow:auto; position:relative;" ui-scrollpoint-target>
+                        <div id="scrollExample2" class="well" ui-scrollpoint="{{ scrollpoint }}">
+                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
+                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
+                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
+                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
+                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
+                            <p ui-scrollpoint="{{ scrollpoint * 2 }}">Scrollpoint * 2</p>
+                            <p ui-scrollpoint="{{ (scrollpoint * 1) + 50 }}">Scrollpoint + 50</p>
+                            <p ui-scrollpoint="{{ (scrollpoint * -1) }}">Scrollpoint * -1</p>
+                        </div>
+                        <div style="height:400px;">
 
-            <h3>How?</h3>
-            <pre class="prettyprint">&lt;p ui-scrollpoint&gt;They see me scrollin...&lt;/p&gt;</pre>
-            <p>You can optionally pass a number to
-                <code>ui-scrollpoint</code> which would override the detected y-offset of the element. Values can be either absolute
-                <code>600</code> or offset from the calculated value <code>-50</code> or <code>+100</code>.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <p class="col-md-6">
+                        You can pass a variable to change de detected y-offset of the element.<br />
+                        The element will be updated accordingly if the value is valid.<br />
+                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint={{ scrollpoint }}"&gt;&lt;/div&gt;</code>
+                    </p>
+                    <p class="col-md-6">
+                        <label for="scrollpoint-value">Try changing the value of scrollpoint</label>
+                        <input type="text" name="scrollpoint-value" class="form-control" ng-model="scrollpoint" />
+                    </p>
+                </div>
+            </div>
         </section>
     </body>
 </html>
