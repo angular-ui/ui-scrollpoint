@@ -1,4 +1,4 @@
-/*global describe, beforeEach, module, inject, it, spyOn, expect, $ */
+/*global describe, beforeEach, afterAll, module, inject, it, spyOn, expect, $, angular */
 describe('uiScrollpoint', function () {
   'use strict';
 
@@ -68,6 +68,46 @@ describe('uiScrollpoint', function () {
       //force firing scroll event
       target.trigger('scroll');
       expect(element.hasClass('ui-scrollpoint')).toBe(true);
+    });
+  });
+  describe('using a scope variable', function() {
+    var element;
+    beforeEach(function() {
+       element = $compile('<div ui-scrollpoint="{{ scrollpoint }}" class="ui-scrollpoint"></div>')(scope);
+    });
+    afterAll(function() {
+      scope.scrollpoint = undefined;
+    });
+    it('should add/remove the ui-scrollpoint class depending on the value of the scrollpoint variable', function () {
+      // number (absolute)
+      scope.scrollpoint = 100;
+      scope.$digest();
+      expect(element.hasClass('ui-scrollpoint')).toBe(false);
+      expect(element.attr('ui-scrollpoint')).toBe('100');
+      
+      // string (absolute)
+      scope.scrollpoint = "100";
+      scope.$digest();
+      expect(element.hasClass('ui-scrollpoint')).toBe(false);
+      expect(element.attr('ui-scrollpoint')).toBe('100');
+      
+      // string (plus relative)
+      scope.scrollpoint = "+100";
+      scope.$digest();
+      expect(element.hasClass('ui-scrollpoint')).toBe(false);
+      expect(element.attr('ui-scrollpoint')).toBe('+100');
+      
+      // number (minus relative)
+      scope.scrollpoint = -100;
+      scope.$digest();
+      expect(element.hasClass('ui-scrollpoint')).toBe(true);
+      expect(element.attr('ui-scrollpoint')).toBe('-100');
+      
+      // string (minus relative)
+      scope.scrollpoint = "-100";
+      scope.$digest();
+      expect(element.hasClass('ui-scrollpoint')).toBe(true);
+      expect(element.attr('ui-scrollpoint')).toBe('-100');
     });
   });
 });
