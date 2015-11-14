@@ -16,13 +16,15 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
         return {
             require: '^?uiScrollpointTarget',
             scope: {
-                uiScrollpoint: '@'
+                uiScrollpoint: '@',
+                uiScrollpointClass: '@?'
             },
             link: function (scope, elm, attrs, uiScrollpointTarget) {
                 var absolute = true,
                     shift = 0,
                     fixLimit,
                     $target = uiScrollpointTarget && uiScrollpointTarget.$element || angular.element($window);
+                var scrollpointClass = scope.uiScrollpointClass || 'ui-scrollpoint';
     
                 function setup(scrollpoint) {
                     if (!scrollpoint) {
@@ -56,16 +58,16 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
     
                     // if pageYOffset is defined use it, otherwise use other crap for IE
                     var offset = uiScrollpointTarget ? $target[0].scrollTop : getWindowScrollTop();
-                    if (!elm.hasClass('ui-scrollpoint') && offset > limit) {
-                        elm.addClass('ui-scrollpoint');
+                    if (!elm.hasClass(scrollpointClass) && offset > limit) {
+                        elm.addClass(scrollpointClass);
                         fixLimit = limit;
-                    } else if (elm.hasClass('ui-scrollpoint') && offset < fixLimit) {
-                        elm.removeClass('ui-scrollpoint');
+                    } else if (elm.hasClass(scrollpointClass) && offset < fixLimit) {
+                        elm.removeClass(scrollpointClass);
                     }
                 }
     
                 function reset() {
-                    elm.removeClass('ui-scrollpoint');
+                    elm.removeClass(scrollpointClass);
                     fixLimit = absolute ? scope.uiScrollpoint : elm[0].offsetTop + shift;
                     onScroll();
                 }

@@ -15,6 +15,9 @@
                 $scope.triggerReset = function(){
                     $rootScope.$broadcast('scrollpointShouldReset');
                 };
+                $scope.scrollAction = function(distance){
+                    $scope.actionTriggered = (distance >= 0);
+                };
             });
         </script>
         <style>
@@ -24,6 +27,10 @@
             }
             p.ui-scrollpoint {
                 background: lightgreen;
+            }
+
+            .scrolled-past {
+                background: cyan;
             }
         </style>
     </head>
@@ -138,6 +145,31 @@
                     <p class="col-md-6">
                         <label for="scrollpoint-value">Try changing the value of scrollpoint</label>
                         <input type="text" name="scrollpoint-value" class="form-control" ng-model="scrollpoint" />
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6" ng-controller="scrollpointTest">
+                    <h3>A scrollpoint with a custom class</h3>
+                    <div class="well" style="height:200px;overflow:auto; position:relative;"  ui-scrollpoint-target>
+                        <div id="scrollExample2" class="well" ui-scrollpoint="+100">
+                            <p ui-scrollpoint="+10px" ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
+                            <p ui-scrollpoint="-100" ui-scrollpoint-class="scrolled-past">offest: -100</p>
+                            <p ui-scrollpoint="+100" ui-scrollpoint-class="scrolled-past">offest: +100</p>
+                            Try scrolling past this line and see effect on above lines...
+                        </div>
+                        <div style="height:400px;">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <p>
+                        Works as normal, but allows a custom ui-scrollpoint-class to be applied.
                     </p>
                 </div>
             </div>
