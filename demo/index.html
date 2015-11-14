@@ -15,8 +15,12 @@
                 $scope.triggerReset = function(){
                     $rootScope.$broadcast('scrollpointShouldReset');
                 };
-                $scope.scrollAction = function(distance){
-                    $scope.actionTriggered = (distance >= 0);
+                $scope.scrollAction = function(element, distance){
+                    // scroll events are triggered by DOM, so use $scope.$apply();
+                    $scope.$apply(function(){
+                        $scope.actionClass = (distance < 0) ? 'warning' : 'info';
+                        $scope.actionDistance = distance;
+                    });
                 };
             });
         </script>
@@ -29,8 +33,11 @@
                 background: lightgreen;
             }
 
-            .scrolled-past {
+            .my-scroll-class {
                 background: cyan;
+            }
+            .another-scroll-class {
+                border: 1px solid blue;
             }
         </style>
     </head>
@@ -140,7 +147,7 @@
                     <p class="col-md-6">
                         You can pass a variable to change de detected y-offset of the element.<br />
                         The element will be updated accordingly if the value is valid.<br />
-                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint={{ scrollpoint }}"&gt;&lt;/div&gt;</code>
+                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint="{{ scrollpoint }}"&gt;&lt;/div&gt;</code>
                     </p>
                     <p class="col-md-6">
                         <label for="scrollpoint-value">Try changing the value of scrollpoint</label>
@@ -152,14 +159,14 @@
                 <div class="col-md-6" ng-controller="scrollpointTest">
                     <h3>A scrollpoint with a custom class</h3>
                     <div class="well" style="height:200px;overflow:auto; position:relative;"  ui-scrollpoint-target>
-                        <div id="scrollExample2" class="well" ui-scrollpoint="+100">
-                            <p ui-scrollpoint="+10px" ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
-                            <p ui-scrollpoint ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
-                            <p ui-scrollpoint ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
-                            <p ui-scrollpoint ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
-                            <p ui-scrollpoint ui-scrollpoint-class="scrolled-past">They see me scrollin...</p>
-                            <p ui-scrollpoint="-100" ui-scrollpoint-class="scrolled-past">offest: -100</p>
-                            <p ui-scrollpoint="+100" ui-scrollpoint-class="scrolled-past">offest: +100</p>
+                        <div id="scrollExample2" class="well" ui-scrollpoint="+100" ui-scrollpoint-class="ui-scrollpoint another-scroll-class">
+                            <p ui-scrollpoint="+10px" ui-scrollpoint-class="my-scroll-class">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-class="my-scroll-class">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-class="my-scroll-class another-scroll-class">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-class="my-scroll-class">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-class="my-scroll-class">They see me scrollin...</p>
+                            <p ui-scrollpoint="-100" ui-scrollpoint-class="my-scroll-class another-scroll-class">offest: -100</p>
+                            <p ui-scrollpoint="+100" ui-scrollpoint-class="my-scroll-class">offest: +100</p>
                             Try scrolling past this line and see effect on above lines...
                         </div>
                         <div style="height:400px;">
@@ -168,8 +175,55 @@
                     </div>
                 </div>
                 <div class="col-md-6">
+                    <h3 class="visible-md">&nbsp;</h3>
                     <p>
-                        Works as normal, but allows a custom ui-scrollpoint-class to be applied.
+                        Works as normal, but allows a custom ui-scrollpoint-class to be applied.<br/>
+                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint-class="my-scroll-class"&gt;&lt;/div&gt;</code>
+                    </p>
+                    <p>
+                        You can also apply multiple scrollpoint classes.<br/>
+                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint-class="my-scroll-class another-scroll-class"&gt;&lt;/div&gt;</code>
+                    </p>
+                </div>
+            </div>
+            <div class="row" ng-controller="scrollpointTest">
+                <div class="col-md-6">
+                    <h3>A scrollpoint with a custom action</h3>
+                    <div class="well" style="height:200px;overflow:auto; position:relative;"  ui-scrollpoint-target>
+                        <div id="scrollExample2" class="well" ui-scrollpoint="+100">
+                            <p ui-scrollpoint="+10px" ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
+                            <p ui-scrollpoint="-100" ui-scrollpoint-action="scrollAction">offest: -100</p>
+                            <p ui-scrollpoint="+100" ui-scrollpoint-action="scrollAction">offest: +100</p>
+                            Try scrolling past this line and see effect on above lines...
+                        </div>
+                        <div style="height:400px;">
+
+                        </div>
+                    </div>
+                    <p class="alert alert-{{actionClass}}">
+                        Scrollpoint @ {{actionDistance}}px.
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="visible-md">&nbsp;</h3>
+                    <p>
+                        Works as normal, but allows a ui-scrollpoint-action to be fired when scrolled past.<br/>
+                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint-action="scrollAction"&gt;&lt;/div&gt;</code>
+                        <pre>
+&lt;script&gt;
+$scope.scrollAction = function(element, distance){
+    // scroll events are triggered by DOM, so use $scope.$apply();
+    $scope.$apply(function(){
+        $scope.actionClass = (distance < 0) ? 'warning' : 'info';
+        $scope.actionDistance = distance;
+    });
+};
+&lt;/script&gt;
+                        </pre>
                     </p>
                 </div>
             </div>

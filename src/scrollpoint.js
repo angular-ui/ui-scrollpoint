@@ -17,14 +17,19 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
             require: '^?uiScrollpointTarget',
             scope: {
                 uiScrollpoint: '@',
-                uiScrollpointClass: '@?'
+                uiScrollpointClass: '@?',
+                uiScrollpointAction: '&?'
             },
             link: function (scope, elm, attrs, uiScrollpointTarget) {
                 var absolute = true,
                     shift = 0,
+                    past = false,
                     fixLimit,
                     $target = uiScrollpointTarget && uiScrollpointTarget.$element || angular.element($window);
                 var scrollpointClass = scope.uiScrollpointClass || 'ui-scrollpoint';
+                if(scope.uiScrollpointAction){
+                    var action = scope.uiScrollpointAction();
+                }
     
                 function setup(scrollpoint) {
                     if (!scrollpoint) {
@@ -58,16 +63,33 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
     
                     // if pageYOffset is defined use it, otherwise use other crap for IE
                     var offset = uiScrollpointTarget ? $target[0].scrollTop : getWindowScrollTop();
-                    if (!elm.hasClass(scrollpointClass) && offset > limit) {
-                        elm.addClass(scrollpointClass);
+                    var distance = null;
+                    if (offset > limit) {
+                        if(!past){
+                            distance = limit - offset;
+                            past = true;
+                        }
+                        if(!elm.hasClass(scrollpointClass)){
+                            elm.addClass(scrollpointClass);
+                        }
                         fixLimit = limit;
-                    } else if (elm.hasClass(scrollpointClass) && offset < fixLimit) {
-                        elm.removeClass(scrollpointClass);
+                    } else if (offset < fixLimit) {
+                        if(past){
+                            distance = fixLimit - offset;
+                            past = false;
+                        }
+                        if(elm.hasClass(scrollpointClass)){
+                            elm.removeClass(scrollpointClass);
+                        }
+                    }
+                    if(action && distance !== null){
+                        action(elm, distance);
                     }
                 }
     
                 function reset() {
                     elm.removeClass(scrollpointClass);
+                    past = false;
                     fixLimit = absolute ? scope.uiScrollpoint : elm[0].offsetTop + shift;
                     onScroll();
                 }
