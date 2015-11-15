@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 1.2.0 - 2015-11-14T17:29:41.758Z
+ * Version: 1.2.0 - 2015-11-15T16:05:13.832Z
  * License: MIT
  */
 
@@ -23,24 +23,27 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                 return iebody.scrollTop;
             }
         }
+        function getWindowScrollHeight() {
+            return $window.innerHeight;
+        }
         return {
             require: '^?uiScrollpointTarget',
             scope: {
                 uiScrollpoint: '@',
                 uiScrollpointClass: '@?',
-                uiScrollpointAction: '&?'
+                uiScrollpointAction: '&?',
+                uiScrollpointBottom: '@'
             },
             link: function (scope, elm, attrs, uiScrollpointTarget) {
                 var absolute = true,
                     shift = 0,
                     past = false,
+                    bottom = scope.uiScrollpointBottom,
                     fixLimit,
-                    $target = uiScrollpointTarget && uiScrollpointTarget.$element || angular.element($window);
-                var scrollpointClass = scope.uiScrollpointClass || 'ui-scrollpoint';
-                if(scope.uiScrollpointAction){
-                    var action = scope.uiScrollpointAction();
-                }
-    
+                    $target = uiScrollpointTarget && uiScrollpointTarget.$element || angular.element($window),
+                    scrollpointClass = scope.uiScrollpointClass || 'ui-scrollpoint',
+                    action = scope.uiScrollpointAction ? scope.uiScrollpointAction() : undefined;
+
                 function setup(scrollpoint) {
                     if (!scrollpoint) {
                         absolute = false;
@@ -74,7 +77,13 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                     // if pageYOffset is defined use it, otherwise use other crap for IE
                     var offset = uiScrollpointTarget ? $target[0].scrollTop : getWindowScrollTop();
                     var distance = null;
-                    if (offset > limit) {
+                    if(bottom){
+                        var height = uiScrollpointTarget ? $target[0].offsetHeight : getWindowScrollHeight();
+                        limit += elm[0].offsetHeight+1;
+                        offset += height;
+                    }
+
+                    if ((!bottom && offset > limit) || (bottom && offset < limit)) {
                         if(!past){
                             distance = limit - offset;
                             past = true;
@@ -83,7 +92,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                             elm.addClass(scrollpointClass);
                         }
                         fixLimit = limit;
-                    } else if (offset < fixLimit) {
+                    } else if ((!bottom && offset < fixLimit) || (bottom && offset > fixLimit)) {
                         if(past){
                             distance = fixLimit - offset;
                             past = false;
@@ -93,14 +102,14 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                         }
                     }
                     if(action && distance !== null){
-                        action(elm, distance);
+                        action(elm, distance * (bottom?-1.0:1.0));
                     }
                 }
     
                 function reset() {
                     elm.removeClass(scrollpointClass);
-                    past = false;
-                    fixLimit = absolute ? scope.uiScrollpoint : elm[0].offsetTop + shift;
+                    past = bottom; // everything is flipped for scrollpoint-bottom (this would be false for normal scrollpoint)
+                    fixLimit = (absolute ? scope.uiScrollpoint : elm[0].offsetTop + shift) + (bottom ? elm[0].offsetHeight+1 : 0);
                     onScroll();
                 }
     

@@ -227,6 +227,38 @@ $scope.scrollAction = function(element, distance){
                     </p>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Bottom Scrollpoint</h3>
+
+                    <div class="well" style="height:200px;overflow:auto; position:relative;"  ui-scrollpoint-target>
+                        <div class="well" style="height:150px;">
+                            This is a spacer
+                        </div>
+                        <div id="scrollBottomExample" class="well" ui-scrollpoint ui-scrollpoint-bottom="true">
+                            <p ui-scrollpoint ui-scrollpoint-bottom="true">They see me scrollin...</p>
+                            <p ui-scrollpoint="+10" ui-scrollpoint-bottom="true">They see me scrollin...</p>
+                            <p ui-scrollpoint="+10" ui-scrollpoint-bottom="true">They see me scrollin...</p>
+                            <p ui-scrollpoint="+10" ui-scrollpoint-bottom="true">They see me scrollin...</p>
+                            <p ui-scrollpoint="+10" ui-scrollpoint-bottom="true">They see me scrollin...</p>
+                            <p ui-scrollpoint="-100" ui-scrollpoint-bottom="true">offest: -100</p>
+                            <p ui-scrollpoint="+100" ui-scrollpoint-bottom="true">offest: +100</p>
+                            Try scrolling past this line and see effect on above lines...
+                        </div>
+                        <div class="well" style="height:150px;">
+                            This is a spacer
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="visible-md">&nbsp;</h3>
+
+                    <p>
+                        Calculates scrollpoint from the bottom of its target instead of top.<br/>
+                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint ui-scrollpoint-bottom="true"&gt;&lt;/div&gt;</code>
+                    </p>
+                </div>
+            </div>
         </section>
     </body>
 </html>
