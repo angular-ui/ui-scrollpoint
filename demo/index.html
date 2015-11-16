@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css">
 
         <!-- ui-scrollpoint files -->
-        <script src="../dist/scrollpoint.js"></script>
+        <script src="../dest/scrollpoint.js"></script>
         <script>
             var app = angular.module('demo', ['ui.scrollpoint']);
             app.controller( 'scrollpointTest', function($scope, $rootScope){
@@ -56,9 +56,9 @@
                     <div id="scrollExample" class="well" ui-scrollpoint="+100">
                         <p ui-scrollpoint>They see me scrollin...</p>
                         <p ui-scrollpoint>They see me scrollin...</p>
-                        <p ui-scrollpoint>They see me scrollin...</p>
-                        <p ui-scrollpoint>They see me scrollin...</p>
-                        <p ui-scrollpoint>They see me scrollin...</p>
+                        <p ui-scrollpoint="10%">They see me scrollin (10%)...</p>
+                        <p ui-scrollpoint="25%">They see me scrollin (25%)...</p>
+                        <p ui-scrollpoint="100%">They see me scrollin (100%)...</p>
                         <p ui-scrollpoint="-100">offest: -100</p>
                         <p ui-scrollpoint="+100">offest: +100</p>
                         Try scrolling past this line and see effect on above lines...
@@ -88,11 +88,11 @@
                             This is a removable spacer
                         </div>
                         <div id="scrollExample2" class="well" ui-scrollpoint="+100">
-                            <p ui-scrollpoint="+10px">They see me scrollin...</p>
+                            <p ui-scrollpoint="+10px">They see me scrollin (+10px)...</p>
                             <p ui-scrollpoint>They see me scrollin...</p>
-                            <p ui-scrollpoint>They see me scrollin...</p>
-                            <p ui-scrollpoint>They see me scrollin...</p>
-                            <p ui-scrollpoint>They see me scrollin...</p>
+                            <p ui-scrollpoint="10%">They see me scrollin (10%)...</p>
+                            <p ui-scrollpoint="25%">They see me scrollin (25%)...</p>
+                            <p ui-scrollpoint="100%">They see me scrollin (100%)...</p>
                             <p ui-scrollpoint="-100">offest: -100</p>
                             <p ui-scrollpoint="+100">offest: +100</p>
                             Try scrolling past this line and see effect on above lines...
@@ -129,11 +129,11 @@
                     <h3>Using a variable</h3>
                     <div class="well" style="height:200px;overflow:auto; position:relative;" ui-scrollpoint-target>
                         <div id="scrollExample2" class="well" ui-scrollpoint="{{ scrollpoint }}">
-                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
-                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
-                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
-                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
-                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin...</p>
+                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin ({{ scrollpoint }})...</p>
+                            <p ui-scrollpoint="{{ scrollpoint }}">They see me scrollin ({{ scrollpoint }})...</p>
+                            <p ui-scrollpoint="+{{ scrollpoint }}">They see me scrollin (+{{ scrollpoint }})...</p>
+                            <p ui-scrollpoint="-{{ scrollpoint }}">They see me scrollin (-{{ scrollpoint }})...</p>
+                            <p ui-scrollpoint="{{ scrollpoint }}%">They see me scrollin ({{ scrollpoint }}%)...</p>
                             <p ui-scrollpoint="{{ scrollpoint * 2 }}">Scrollpoint * 2</p>
                             <p ui-scrollpoint="{{ (scrollpoint * 1) + 50 }}">Scrollpoint + 50</p>
                             <p ui-scrollpoint="{{ (scrollpoint * -1) }}">Scrollpoint * -1</p>
@@ -160,7 +160,7 @@
                     <h3>A scrollpoint with a custom class</h3>
                     <div class="well" style="height:200px;overflow:auto; position:relative;"  ui-scrollpoint-target>
                         <div id="scrollExample2" class="well" ui-scrollpoint="+100" ui-scrollpoint-class="ui-scrollpoint another-scroll-class">
-                            <p ui-scrollpoint="+10px" ui-scrollpoint-class="my-scroll-class">They see me scrollin...</p>
+                            <p ui-scrollpoint="-10px" ui-scrollpoint-class="my-scroll-class">They see me scrollin (-10px)...</p>
                             <p ui-scrollpoint ui-scrollpoint-class="my-scroll-class">They see me scrollin...</p>
                             <p ui-scrollpoint ui-scrollpoint-class="my-scroll-class another-scroll-class">They see me scrollin...</p>
                             <p ui-scrollpoint ui-scrollpoint-class="my-scroll-class">They see me scrollin...</p>
@@ -191,7 +191,7 @@
                     <h3>A scrollpoint with a custom action</h3>
                     <div class="well" style="height:200px;overflow:auto; position:relative;"  ui-scrollpoint-target>
                         <div id="scrollExample2" class="well" ui-scrollpoint="+100">
-                            <p ui-scrollpoint="+10px" ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
+                            <p ui-scrollpoint="-10px" ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
                             <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
                             <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
                             <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
@@ -230,22 +230,45 @@ $scope.scrollAction = function(element, distance){
             <div class="row">
                 <div class="col-md-6">
                     <h3>Bottom Scrollpoint</h3>
-
+                    <div class="well">
+                        <div id="scrollBottomExample" class="well" ui-scrollpoint ui-scrollpoint-bottom="true">
+                            <p ui-scrollpoint ui-scrollpoint-bottom="true">They see me scrollin...</p>
+                            <p ui-scrollpoint="+15" ui-scrollpoint-bottom="true">They see me scrollin (+15)...</p>
+                            <p ui-scrollpoint="100%" ui-scrollpoint-bottom="true">They see me scrollin (100%)...</p>
+                            <p ui-scrollpoint="25%" ui-scrollpoint-bottom="true">They see me scrollin (25%)...</p>
+                            <p ui-scrollpoint="10%" ui-scrollpoint-bottom="true">They see me scrollin (10%)...</p>
+                            <p ui-scrollpoint="100" ui-scrollpoint-bottom="true">They see me scrollin (100)</p>
+                            <p ui-scrollpoint="200" ui-scrollpoint-bottom="true">They see me scrollin (200)</p>
+                            Try scrolling past this line and see effect on above lines...
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="visible-md">&nbsp;</h3>
+                    <p>
+                        Calculates scrollpoint from the bottom of its target instead of top.<br/>
+                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint="100" ui-scrollpoint-bottom="true"&gt;&lt;/div&gt;</code> would activate the scrollpoint if the window is scrolled above 100 pixels from the bottom.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Bottom Scrollpoint with parent target</h3>
                     <div class="well" style="height:200px;overflow:auto; position:relative;"  ui-scrollpoint-target>
                         <div class="well" style="height:150px;">
                             This is a spacer
                         </div>
                         <div id="scrollBottomExample" class="well" ui-scrollpoint ui-scrollpoint-bottom="true">
                             <p ui-scrollpoint ui-scrollpoint-bottom="true">They see me scrollin...</p>
-                            <p ui-scrollpoint="+10" ui-scrollpoint-bottom="true">They see me scrollin...</p>
-                            <p ui-scrollpoint="+10" ui-scrollpoint-bottom="true">They see me scrollin...</p>
-                            <p ui-scrollpoint="+10" ui-scrollpoint-bottom="true">They see me scrollin...</p>
-                            <p ui-scrollpoint="+10" ui-scrollpoint-bottom="true">They see me scrollin...</p>
-                            <p ui-scrollpoint="-100" ui-scrollpoint-bottom="true">offest: -100</p>
-                            <p ui-scrollpoint="+100" ui-scrollpoint-bottom="true">offest: +100</p>
+                            <p ui-scrollpoint="+15" ui-scrollpoint-bottom="true">They see me scrollin (+15)...</p>
+                            <p ui-scrollpoint="50%" ui-scrollpoint-bottom="true">They see me scrollin (50%)...</p>
+                            <p ui-scrollpoint="75%" ui-scrollpoint-bottom="true">They see me scrollin (75%)...</p>
+                            <p ui-scrollpoint="100%" ui-scrollpoint-bottom="true">They see me scrollin (100%)...</p>
+                            <p ui-scrollpoint="100" ui-scrollpoint-bottom="true">They see me scrollin (100)</p>
+                            <p ui-scrollpoint="100" ui-scrollpoint-bottom="true">They see me scrollin (100)</p>
                             Try scrolling past this line and see effect on above lines...
                         </div>
-                        <div class="well" style="height:150px;">
+                        <div class="well" style="height:50px;">
                             This is a spacer
                         </div>
                     </div>
@@ -255,7 +278,7 @@ $scope.scrollAction = function(element, distance){
 
                     <p>
                         Calculates scrollpoint from the bottom of its target instead of top.<br/>
-                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint ui-scrollpoint-bottom="true"&gt;&lt;/div&gt;</code>
+                        Example: <code ng-non-bindable>&lt;div ui-scrollpoint="+15" ui-scrollpoint-bottom="true"&gt;&lt;/div&gt;</code> would activate the scrollpoint when it is 15 pixels from the bottom of its target.
                     </p>
                 </div>
             </div>
