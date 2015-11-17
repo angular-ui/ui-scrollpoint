@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 1.2.0 - 2015-11-14T17:29:41.758Z
+ * Version: 1.2.0 - 2015-11-16T21:08:02.863Z
  * License: MIT
  */
 
@@ -23,34 +23,42 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                 return iebody.scrollTop;
             }
         }
+        function getWindowHeight(contentHeight) {
+            return (contentHeight ? ($window.document.body.scrollHeight - $window.innerHeight) : $window.innerHeight);
+        }
         return {
             require: '^?uiScrollpointTarget',
             scope: {
                 uiScrollpoint: '@',
                 uiScrollpointClass: '@?',
-                uiScrollpointAction: '&?'
+                uiScrollpointAction: '&?',
+                uiScrollpointBottom: '@'
             },
             link: function (scope, elm, attrs, uiScrollpointTarget) {
                 var absolute = true,
+                    percent = false,
                     shift = 0,
                     past = false,
+                    bottom = scope.uiScrollpointBottom,
                     fixLimit,
-                    $target = uiScrollpointTarget && uiScrollpointTarget.$element || angular.element($window);
-                var scrollpointClass = scope.uiScrollpointClass || 'ui-scrollpoint';
-                if(scope.uiScrollpointAction){
-                    var action = scope.uiScrollpointAction();
-                }
-    
+                    $target = uiScrollpointTarget && uiScrollpointTarget.$element || angular.element($window),
+                    scrollpointClass = scope.uiScrollpointClass || 'ui-scrollpoint',
+                    action = scope.uiScrollpointAction ? scope.uiScrollpointAction() : undefined;
+
                 function setup(scrollpoint) {
                     if (!scrollpoint) {
                         absolute = false;
                     } else if (typeof (scrollpoint) === 'string') {
                         // charAt is generally faster than indexOf: http://jsperf.com/indexof-vs-charat
+                        percent = (scrollpoint.charAt(scrollpoint.length-1) == '%');
+                        if(percent){
+                            scrollpoint = scrollpoint.substr(0, scrollpoint.length-1);
+                        }
                         if (scrollpoint.charAt(0) === '-') {
-                            absolute = false;
+                            absolute = percent;
                             shift = -parseFloat(scrollpoint.substr(1));
                         } else if (scrollpoint.charAt(0) === '+') {
-                            absolute = false;
+                            absolute = percent;
                             shift = parseFloat(scrollpoint.substr(1));
                         } else {
                             var parsed = parseFloat(scrollpoint);
@@ -60,21 +68,56 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                             }
                         }
                     } else if (typeof (scrollpoint) === 'number') {
-                        setup(scrollpoint.toString());
+                        scrollpoint = scrollpoint.toString();
+                        setup(scrollpoint);
                         return;
                     }
-                    fixLimit = absolute ? scope.uiScrollpoint : elm[0].offsetTop + shift;
+                    fixLimit = calcLimit();
                 }
                 setup(scope.uiScrollpoint);
+
+                function calcLimit(){
+                    var limit = absolute ? shift : calcElementTop() + shift;
+                    if(percent && absolute){
+                        // percent only works in absolute mode (absolute mode is forced for %'s in setup())
+                        limit = shift / 100.0 * calcTargetContentHeight();
+                        if(bottom){
+                            limit = calcTargetContentHeight() - limit;
+                        }
+                    }
+                    else if(bottom){
+                        if(absolute){
+                            limit = calcTargetContentHeight() - limit;
+                        }
+                        else{
+                            limit = limit + elm[0].offsetHeight+1 - calcTargetHeight();
+                        }
+                    }
+                    return limit;
+                }
+
+                function calcElementTop(){
+                    if(!uiScrollpointTarget){
+                        var bounds = elm[0].getBoundingClientRect();
+                        return bounds.top + getWindowScrollTop();
+                    }
+                    return elm[0].offsetTop;
+                }
+                function calcTargetHeight(){
+                    return ( uiScrollpointTarget ? $target[0].offsetHeight : getWindowHeight() );
+                }
+                function calcTargetContentHeight(){
+                    return ( uiScrollpointTarget ? ($target[0].scrollHeight - $target[0].clientHeight) : getWindowHeight(true) );
+                }
     
                 function onScroll() {
-    
-                    var limit = absolute ? scope.uiScrollpoint : elm[0].offsetTop + shift;
+                    var limit = calcLimit();
     
                     // if pageYOffset is defined use it, otherwise use other crap for IE
                     var offset = uiScrollpointTarget ? $target[0].scrollTop : getWindowScrollTop();
                     var distance = null;
-                    if (offset > limit) {
+                    
+                    if ((!bottom && offset >= limit) || (bottom && offset <= limit)) {
                         if(!past){
                             distance = limit - offset;
                             past = true;
@@ -83,7 +126,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                             elm.addClass(scrollpointClass);
                         }
                         fixLimit = limit;
-                    } else if (offset < fixLimit) {
+                    } else if ((!bottom && offset < fixLimit) || (bottom && offset > fixLimit)) {
                         if(past){
                             distance = fixLimit - offset;
                             past = false;
@@ -93,14 +136,14 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
                         }
                     }
                     if(action && distance !== null){
-                        action(elm, distance);
+                        action(elm, distance * (bottom?-1.0:1.0));
                     }
                 }
     
                 function reset() {
                     elm.removeClass(scrollpointClass);
-                    past = false;
-                    fixLimit = absolute ? scope.uiScrollpoint : elm[0].offsetTop + shift;
+                    past = bottom; // everything is flipped for scrollpoint-bottom (this would be false for normal scrollpoint)
+                    fixLimit = calcLimit();
                     onScroll();
                 }
     
