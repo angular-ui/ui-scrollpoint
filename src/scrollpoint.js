@@ -158,7 +158,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
     
                 function reset() {
                     elm.removeClass(uiScrollpoint.scrollpointClass);
-                    uiScrollpoint.past = uiScrollpoint.bottom; // everything is flipped for scrollpoint-bottom (this would be false for normal scrollpoint)
+                    uiScrollpoint.past = undefined;
                     fixLimit = calcLimit();
                     onScroll();
                 }

@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 1.2.1 - 2015-11-25T22:24:07.196Z
+ * Version: 1.2.1 - 2015-11-25T23:37:35.261Z
  * License: MIT
  */
 
@@ -168,7 +168,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', func
     
                 function reset() {
                     elm.removeClass(uiScrollpoint.scrollpointClass);
-                    uiScrollpoint.past = uiScrollpoint.bottom; // everything is flipped for scrollpoint-bottom (this would be false for normal scrollpoint)
+                    uiScrollpoint.past = undefined;
                     fixLimit = calcLimit();
                     onScroll();
                 }
