@@ -56,7 +56,7 @@
 
                     <div id="scrollExample" class="well" ui-scrollpoint="+100">
                         <p ui-scrollpoint>They see me scrollin...</p>
-                        <p ui-scrollpoint ui-scrollpoint-pin>They see me scrollin and pinnin...</p>
+                        <p ui-scrollpoint ui-scrollpoint-pin>They see me scrollin and {{pinWord}}... <input type="text" ng-model="pinWord" /></p>
                         <p ui-scrollpoint="10%">They see me scrollin (10%)...</p>
                         <p ui-scrollpoint="25%">They see me scrollin (25%)...</p>
                         <p ui-scrollpoint="100%">They see me scrollin (100%)...</p>
@@ -73,6 +73,11 @@
                     <p class="alert alert-info"><i class="icon-info-sign"></i> Remember that this directive
                         <strong>only</strong> adds a
                         <code>ui-scrollpoint</code> class to the element. It is up to you to add the corresponding CSS rules, however it also gives you the ability to add other rules instead if you prefer.
+                    </p>
+
+                    <p>
+                        <label for="pinWord">Pinned elements remain bound to scope</label><br/>
+                        <input id="pinWord" type="text" ng-model="pinWord" ng-init="pinWord='pinnin'" />
                     </p>
                 </div>
             </div>
@@ -193,7 +198,7 @@
                     <div class="well" style="height:200px;overflow:auto; position:relative;"  ui-scrollpoint-target>
                         <div id="scrollExample2" class="well" ui-scrollpoint="+100">
                             <p ui-scrollpoint="-10px" ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
-                            <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
+                            <p ui-scrollpoint ui-scrollpoint-action="scrollAction" ui-scrollpoint-pin>They see me scrollin...</p>
                             <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
                             <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
                             <p ui-scrollpoint ui-scrollpoint-action="scrollAction">They see me scrollin...</p>
