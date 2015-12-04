@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 1.2.1 - 2015-12-03T03:31:18.956Z
+ * Version: 1.2.1 - 2015-12-04T18:53:53.372Z
  * License: MIT
  */
 
@@ -43,10 +43,13 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 this.hasTarget = false;
 
                 this.edges = {top: true};
+                this.hitEdge = undefined;
 
                 this.absolute = true;
                 this.percent = false;
                 this.shift = 0;
+
+                this.enabled = true;
                 
                 this.scrollpointClass = 'ui-scrollpoint';
                 this.actions = undefined;
@@ -155,7 +158,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 };
 
                 this.scrollEdgeHit = function(){
-                    var offset;
+                    var offset, hitEdge;
                     for(var scroll_edge in this.edges){
                         var scroll_top = (scroll_edge == 'top');
                         var scroll_bottom = (scroll_edge == 'bottom');
@@ -205,8 +208,10 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
 
                         if(angular.isUndefined(offset) || edge_offset > offset){
                             offset = edge_offset;
+                            hitEdge = scroll_edge;
                         }
                     }
+                    this.hitEdge = (offset >= 0) ? hitEdge : undefined;
                     return offset;
                 };
 
@@ -276,7 +281,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 });
     
                 function onScroll() {
-                    if(!ready){ return; }
+                    if(!ready || !uiScrollpoint.enabled){ return; }
 
                     var edgeHit = uiScrollpoint.scrollEdgeHit();
                     
@@ -314,7 +319,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                         // fire the actions
                         if(uiScrollpoint.actions){
                             for(var i in uiScrollpoint.actions){
-                                uiScrollpoint.actions[i](edgeHit, elm);
+                                uiScrollpoint.actions[i](edgeHit, elm, uiScrollpoint.hitEdge);
                             }
                         }
                     }

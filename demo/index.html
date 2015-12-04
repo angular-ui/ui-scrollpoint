@@ -14,13 +14,15 @@
         <script>
             var app = angular.module('demo', ['ui.scrollpoint']);
             app.controller( 'scrollpointTest', function($scope){
-                $scope.trackView = function(distance, element){
+                $scope.trackView = function(distance, element, edge){
                     if(distance >= 0){
                         $scope.inView[element.attr('id')] = false;
+                        $scope.outView[element.attr('id')] = edge;
                         element.removeClass('in-view');
                     }
                     else{
                         $scope.inView[element.attr('id')] = true;
+                        $scope.outView[element.attr('id')] = undefined;
                         element.addClass('in-view');
                     }
                     $scope.$apply();
@@ -28,6 +30,7 @@
 
                 $scope.scrollpoint = undefined;
                 $scope.inView = {};
+                $scope.outView = {};
                 $scope.topSpacer = false;
                 $scope.$watch('topSpacer', function(){
                     $scope.$broadcast('scrollpointShouldReset');
@@ -63,7 +66,7 @@
                 </div>
                 <ul class="view-trackers">
                     <li ng-repeat="(id,isIn) in inView" ng-class="{in: isIn}">
-                        <strong>{{id}}:</strong> {{isIn}}
+                        <strong>{{id}}:</strong> {{isIn}} <span ng-show="outView[id]">({{outView[id]}})</span>
                     </li>
                 </ul>
             </div>
