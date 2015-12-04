@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 1.2.1 - 2015-12-04T18:53:53.372Z
+ * Version: 1.2.1 - 2015-12-04T19:16:11.828Z
  * License: MIT
  */
 
@@ -48,6 +48,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 this.absolute = true;
                 this.percent = false;
                 this.shift = 0;
+                this.posCache = {};
 
                 this.enabled = true;
                 
@@ -228,15 +229,22 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                     return ( this.hasTarget ? (this.$target[0].scrollHeight - this.$target[0].clientHeight) : getWindowScrollHeight() );
                 };
 
-                this.getElementTop = function(){
+                this.getElementTop = function(current){
+                    if(!current && angular.isDefined(this.posCache.top)){
+                        return this.posCache.top;
+                    }
                     var top = this.$element[0].offsetTop;
                     if(this.hasTarget){
                         top -= this.$target[0].offsetTop;
                     }
                     return top;
                 };
-                this.getElementBottom = function(){
-                    return this.getElementTop() + this.$element[0].offsetHeight;
+                this.getElementBottom = function(current){
+                    return this.getElementTop(current) + this.$element[0].offsetHeight;
+                };
+
+                this.cachePosition = function(){
+                    this.posCache.top = this.getElementTop(true);
                 };
             },
             link: function (scope, elm, attrs, Ctrl) {
@@ -283,6 +291,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 function onScroll() {
                     if(!ready || !uiScrollpoint.enabled){ return; }
 
+                    var hitEdge = uiScrollpoint.hitEdge; // which edge did scrollpoint trigger at before
                     var edgeHit = uiScrollpoint.scrollEdgeHit();
                     
                     // edgeHit >= 0 - scrollpoint is scrolled out of active view
@@ -313,13 +322,14 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                             fireActions = true;
                             hit = false;
                         }
+                        uiScrollpoint.cachePosition();
                     }
 
                     if(fireActions){
                         // fire the actions
                         if(uiScrollpoint.actions){
                             for(var i in uiScrollpoint.actions){
-                                uiScrollpoint.actions[i](edgeHit, elm, uiScrollpoint.hitEdge);
+                                uiScrollpoint.actions[i](edgeHit, elm, uiScrollpoint.hitEdge || hitEdge);
                             }
                         }
                     }
