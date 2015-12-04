@@ -328,6 +328,8 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 function reset() {
                     elm.removeClass(uiScrollpoint.scrollpointClass);
                     hit = undefined;
+                    uiScrollpoint.hitEdge = undefined;
+                    uiScrollpoint.cachePosition();
                     $timeout(onScroll);
                 }
                 elm.ready(function(){ ready=true; onScroll(); });

@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 1.2.1 - 2015-12-04T19:16:11.828Z
+ * Version: 1.2.1 - 2015-12-04T22:15:24.574Z
  * License: MIT
  */
 
@@ -338,6 +338,8 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 function reset() {
                     elm.removeClass(uiScrollpoint.scrollpointClass);
                     hit = undefined;
+                    uiScrollpoint.hitEdge = undefined;
+                    uiScrollpoint.cachePosition();
                     $timeout(onScroll);
                 }
                 elm.ready(function(){ ready=true; onScroll(); });
