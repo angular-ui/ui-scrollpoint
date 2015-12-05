@@ -15,26 +15,40 @@
             var app = angular.module('demo', ['ui.scrollpoint']);
             app.controller( 'scrollpointTest', function($scope){
                 $scope.trackView = function(distance, element, edge){
+                    var id = element.attr('id');
+                    if($scope.views.indexOf(id) == -1){
+                        $scope.views.push(id);
+                        $scope.views.sort();
+                    }
                     if(distance >= 0){
-                        $scope.inView[element.attr('id')] = false;
-                        $scope.outView[element.attr('id')] = edge;
+                        $scope.inView[id] = false;
+                        $scope.outView[id] = edge;
                         element.removeClass('in-view');
                     }
                     else{
-                        $scope.inView[element.attr('id')] = true;
-                        $scope.outView[element.attr('id')] = undefined;
+                        $scope.inView[id] = true;
+                        $scope.outView[id] = undefined;
                         element.addClass('in-view');
                     }
                     $scope.$apply();
                 };
 
+                $scope.reportScroll = function(distance, element, edge){
+                    // distance >= 0 means scrollpoint is hit & applied
+                    // distance < 0 means scrollpoint is hit & unapplied
+                    // undefined edge means initialized unhit / unapplied (-distance is distance from edge)
+                    console.log(edge+' hit @ '+distance);
+                };
+
                 $scope.scrollpoint = undefined;
+                $scope.views = [];
                 $scope.inView = {};
                 $scope.outView = {};
                 $scope.topSpacer = false;
                 $scope.$watch('topSpacer', function(){
                     $scope.$broadcast('scrollpointShouldReset');
                 });
+                $scope.$broadcast('scrollpointShouldReset');
             });
         </script>
         <style>
@@ -65,8 +79,8 @@
                     <label for="scrollpointValue">Scrollpoint:</label> <input type="text" ng-model="scrollpoint" id="scrollpointValue" placeholder="absolute, +, -, or %" />
                 </div>
                 <ul class="view-trackers">
-                    <li ng-repeat="(id,isIn) in inView" ng-class="{in: isIn}">
-                        <strong>{{id}}:</strong> {{isIn}} <span ng-show="outView[id]">({{outView[id]}})</span>
+                    <li ng-repeat="view in views" ng-class="{in: inView[view]}">
+                        <strong>{{view}}:</strong> {{inView[view]}} <span ng-show="outView[view]">({{outView[view]}})</span>
                     </li>
                 </ul>
             </div>
@@ -105,8 +119,9 @@
                 <span class="id">id="viewtrack-1"</span>
             </div>
 
-            <div class="demo" ui-scrollpoint="{{scrollpoint}}">
-                ui-scrollpoint="{{scrollpoint}}"
+            <div class="demo" ui-scrollpoint="{{scrollpoint}}" ui-scrollpoint-action="reportScroll">
+                ui-scrollpoint="{{scrollpoint}}"<br/>
+                ui-scrollpoint-action="reportScroll"
             </div>
 
             <div class="demo" ui-scrollpoint="{{scrollpoint}}" ui-scrollpoint-class="my-scrollpoint">
@@ -204,9 +219,10 @@
                 ui-scrollpoint-edge="bottom"
             </div>
 
-            <div class="demo" ui-scrollpoint="+25" ui-scrollpoint-edge="bottom">
+            <div class="demo" ui-scrollpoint="+25" ui-scrollpoint-edge="bottom" ui-scrollpoint-action="reportScroll">
                 ui-scrollpoint="+25"<br/>
-                ui-scrollpoint-edge="bottom"
+                ui-scrollpoint-edge="bottom"<br/>
+                ui-scrollpoint-action="reportScroll"
             </div>
 
             <br style="clear:both;"/>
