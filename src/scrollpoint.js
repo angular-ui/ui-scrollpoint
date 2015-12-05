@@ -149,7 +149,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 };
 
                 this.scrollEdgeHit = function(){
-                    var offset, hitEdge;
+                    var offset, hitEdge, flipOffset;
                     for(var scroll_edge in this.edges){
                         var scroll_top = (scroll_edge == 'top');
                         var scroll_bottom = (scroll_edge == 'bottom');
@@ -200,10 +200,11 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                         if(angular.isUndefined(offset) || edge_offset > offset){
                             offset = edge_offset;
                             hitEdge = scroll_edge;
+                            flipOffset = (scroll_bottom && this.absolute);
                         }
                     }
                     this.hitEdge = (offset >= 0) ? hitEdge : undefined;
-                    return offset;
+                    return offset*(flipOffset?-1.0:1.0);
                 };
 
                 this.getScrollOffset = function(){
@@ -326,11 +327,13 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 }
     
                 function reset() {
-                    elm.removeClass(uiScrollpoint.scrollpointClass);
-                    hit = undefined;
-                    uiScrollpoint.hitEdge = undefined;
-                    uiScrollpoint.cachePosition();
-                    $timeout(onScroll);
+                    $timeout(function(){
+                        elm.removeClass(uiScrollpoint.scrollpointClass);
+                        hit = undefined;
+                        uiScrollpoint.hitEdge = undefined;
+                        uiScrollpoint.cachePosition();
+                        onScroll();
+                    });
                 }
                 elm.ready(function(){ ready=true; onScroll(); });
 
