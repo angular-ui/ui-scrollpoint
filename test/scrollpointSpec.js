@@ -38,19 +38,24 @@ describe('uiScrollpoint', function () {
   describe('scrolling the window', function () {
     it('should add the ui-scrollpoint class if the offset is greater than specified', function () {
       var element = $compile('<div ui-scrollpoint="-100"></div>')(scope);
-      angular.element($window).trigger('scroll');
-      expect(element.hasClass('ui-scrollpoint')).toBe(true);
+      element.ready(function(){
+        angular.element($window).trigger('scroll');
+        expect(element.hasClass('ui-scrollpoint')).toBe(true);
+      });
     });
     it('should remove the ui-scrollpoint class if the offset is less than specified (using absolute coord)', function () {
       var element = $compile('<div ui-scrollpoint="100" class="ui-scrollpoint"></div>')(scope);
-      angular.element($window).trigger('scroll');
-      expect(element.hasClass('ui-scrollpoint')).toBe(false);
-
+      element.ready(function(){
+        angular.element($window).trigger('scroll');
+        expect(element.hasClass('ui-scrollpoint')).toBe(false);
+      });
     });
     it('should remove the ui-scrollpoint class if the offset is less than specified (using relative coord)', function () {
       var element = $compile('<div ui-scrollpoint="+100" class="ui-scrollpoint"></div>')(scope);
-      angular.element($window).trigger('scroll');
-      expect(element.hasClass('ui-scrollpoint')).toBe(false);
+      element.ready(function(){
+        angular.element($window).trigger('scroll');
+        expect(element.hasClass('ui-scrollpoint')).toBe(false);
+      });
     });
   });
   describe('scrolling the target', function() {
@@ -66,8 +71,10 @@ describe('uiScrollpoint', function () {
     it('should get scroll position from target', function() {
       target[0].scrollTop = 150;
       //force firing scroll event
-      target.trigger('scroll');
-      expect(element.hasClass('ui-scrollpoint')).toBe(true);
+      element.ready(function(){
+        target.trigger('scroll');
+        expect(element.hasClass('ui-scrollpoint')).toBe(true);
+      });
     });
   });
   describe('using a scope variable', function() {
@@ -79,35 +86,37 @@ describe('uiScrollpoint', function () {
       scope.scrollpoint = undefined;
     });
     it('should add/remove the ui-scrollpoint class depending on the value of the scrollpoint variable', function () {
-      // number (absolute)
-      scope.scrollpoint = 100;
-      scope.$digest();
-      expect(element.hasClass('ui-scrollpoint')).toBe(false);
-      expect(element.attr('ui-scrollpoint')).toBe('100');
-      
-      // string (absolute)
-      scope.scrollpoint = "100";
-      scope.$digest();
-      expect(element.hasClass('ui-scrollpoint')).toBe(false);
-      expect(element.attr('ui-scrollpoint')).toBe('100');
-      
-      // string (plus relative)
-      scope.scrollpoint = "+100";
-      scope.$digest();
-      expect(element.hasClass('ui-scrollpoint')).toBe(false);
-      expect(element.attr('ui-scrollpoint')).toBe('+100');
-      
-      // number (minus relative)
-      scope.scrollpoint = -100;
-      scope.$digest();
-      expect(element.hasClass('ui-scrollpoint')).toBe(true);
-      expect(element.attr('ui-scrollpoint')).toBe('-100');
-      
-      // string (minus relative)
-      scope.scrollpoint = "-100";
-      scope.$digest();
-      expect(element.hasClass('ui-scrollpoint')).toBe(true);
-      expect(element.attr('ui-scrollpoint')).toBe('-100');
+      element.ready(function(){
+        // number (absolute)
+        scope.scrollpoint = 100;
+        scope.$digest();
+        expect(element.hasClass('ui-scrollpoint')).toBe(false);
+        expect(element.attr('ui-scrollpoint')).toBe('100');
+        
+        // string (absolute)
+        scope.scrollpoint = "100";
+        scope.$digest();
+        expect(element.hasClass('ui-scrollpoint')).toBe(false);
+        expect(element.attr('ui-scrollpoint')).toBe('100');
+        
+        // string (plus relative)
+        scope.scrollpoint = "+100";
+        scope.$digest();
+        expect(element.hasClass('ui-scrollpoint')).toBe(false);
+        expect(element.attr('ui-scrollpoint')).toBe('+100');
+        
+        // number (minus relative)
+        scope.scrollpoint = -100;
+        scope.$digest();
+        expect(element.hasClass('ui-scrollpoint')).toBe(true);
+        expect(element.attr('ui-scrollpoint')).toBe('-100');
+        
+        // string (minus relative)
+        scope.scrollpoint = "-100";
+        scope.$digest();
+        expect(element.hasClass('ui-scrollpoint')).toBe(true);
+        expect(element.attr('ui-scrollpoint')).toBe('-100');
+      });
     });
   });
 });
