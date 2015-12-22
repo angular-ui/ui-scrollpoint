@@ -28,6 +28,7 @@ div.demo {
     position: fixed;
     top: 0;
     right: 0;
+    z-index: 500;
 }
 .top-bar > * {
     display: inline-block;
@@ -51,6 +52,10 @@ ul.view-trackers {
     padding-left: 0px;
 }
 
+.top-bar div.input {
+    margin-bottom: 10px;
+}
+
 div.scrollpoint-target {
     margin: 50px 0px;
     padding: 10px;
@@ -60,11 +65,7 @@ div.scrollpoint-target {
     border: 1px solid #BBB;
 }
 
-div.spacerToggle {
-    float: right;
-    clear: both;
-}
-
-div h2 {
+div h2,
+div h4 {
     margin-top: 0px;
 }

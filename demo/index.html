@@ -13,7 +13,7 @@
         <script src="../dist/scrollpoint.js"></script>
         <script>
             var app = angular.module('demo', ['ui.scrollpoint']);
-            app.controller( 'scrollpointTest', function($scope){
+            app.controller( 'scrollpointTest', function($scope, $timeout){
                 $scope.trackView = function(distance, element, edge){
                     var id = element.attr('id');
                     if($scope.views.indexOf(id) == -1){
@@ -45,10 +45,44 @@
                 $scope.inView = {};
                 $scope.outView = {};
                 $scope.topSpacer = false;
-                $scope.$watch('topSpacer', function(){
+                $scope.showAbsolute = false;
+                $scope.absolute = { x: 0, y: 575 };
+                $scope.shiftRelative = false;
+                $scope.relative = { x: 50, y: 50 };
+
+                $scope.target = {
+                    showControls: false,
+                    showAbsolute: false,
+                    absolute: { x: 0, y: 100 },
+                    showRelative: true,
+                    relative: { x: 15, y: 0 }
+                };
+
+                // watch toggle controls
+                $scope.$watchGroup(['topSpacer', 'showAbsolute', 'shiftRelative', 'target.showAbsolute', 'target.showRelative'], 
+                    function(){
+                        $scope.$broadcast('scrollpointShouldReset');
+                    });
+
+                // watch co-ordinate collections
+                $scope.$watchCollection('absolute', function(){
                     $scope.$broadcast('scrollpointShouldReset');
                 });
-                $scope.$broadcast('scrollpointShouldReset');
+                $scope.$watchCollection('relative', function(){
+                    $scope.$broadcast('scrollpointShouldReset');
+                });
+                $scope.$watchCollection('target.absolute', function(){
+                    $scope.$broadcast('scrollpointShouldReset');
+                });
+                $scope.$watchCollection('target.relative', function(){
+                    $scope.$broadcast('scrollpointShouldReset');
+                });
+
+                // initialize
+                $timeout(function(){
+                    $scope.$broadcast('scrollpointShouldReset');
+                }, 10);
+                
             });
         </script>
         <style>
@@ -67,6 +101,19 @@
             .demo.in-view .id {
                 font-weight: bold;
             }
+
+            .parent {
+                padding: 10px;
+                border: 1px solid #BBB;
+            }
+            .parent.relative {
+                position: relative;
+                background-color: #FEA;
+            }
+            .parent.absolute {
+                position: absolute;
+                background-color: #FE7;
+            }
         </style>
     </head>
 
@@ -83,13 +130,53 @@
                         <strong>{{view}}:</strong> {{inView[view]}} <span ng-show="outView[view]">({{outView[view]}})</span>
                     </li>
                 </ul>
+
+                <br style="clear:both;"/>
+
+                <div class="input pull-right">
+                    <label for="windowTopSpacer">Show top spacer:</label> <input type="checkbox" ng-model="topSpacer" id="windowTopSpacer" />
+                </div>
+
+                <div class="input pull-right">
+                    <label for="showAbsolute">Show absolute parent:</label> <input type="checkbox" ng-model="showAbsolute" id="showAbsolute" />
+                    <div ng-show="showAbsolute">
+                        <label for="absoluteX">X:</label> <input type="text" ng-model="absolute.x" id="absoluteX" /><br/>
+                        <label for="absoluteY">Y:</label> <input type="text" ng-model="absolute.y" id="absoluteY" />
+                    </div>
+                </div>
+
+                <div class="input pull-right">
+                    <label for="shiftRelative">Shift relative parent:</label> <input type="checkbox" ng-model="shiftRelative" id="shiftRelative" />
+                    <div ng-show="shiftRelative">
+                        <label for="relativeX">X:</label> <input type="text" ng-model="relative.x" id="relativeX" /><br/>
+                        <label for="relativeY">Y:</label> <input type="text" ng-model="relative.y" id="relativeY" />
+                    </div>
+                </div>
+
+                <br style="clear:both;"/>
+
+                <div class="input pull-right">
+                    <label for="targetShowControls">Controls for Target:</label> <input type="checkbox" ng-model="target.showControls" id="targetShowControls" />
+                    <div ng-show="target.showControls">
+                        <div class="input pull-right">
+                            <label for="targetShowAbsolute">Show absolute parent:</label> <input type="checkbox" ng-model="target.showAbsolute" id="targetShowAbsolute" />
+                            <div ng-show="target.showAbsolute">
+                                <label for="targetAbsoluteX">X:</label> <input type="text" ng-model="target.absolute.x" id="targetAbsoluteX" /><br/>
+                                <label for="targetAbsoluteY">Y:</label> <input type="text" ng-model="target.absolute.y" id="targetAbsoluteY" />
+                            </div>
+                        </div>
+
+                        <div class="input pull-right">
+                            <label for="targetShowRelative">Show relative parent:</label> <input type="checkbox" ng-model="target.showRelative" id="targetShowRelative" />
+                            <div ng-show="target.showRelative">
+                                <label for="targetRelativeX">X:</label> <input type="text" ng-model="target.relative.x" id="targetRelativeX" /><br/>
+                                <label for="targetRelativeY">Y:</label> <input type="text" ng-model="target.relative.y" id="targetRelativeY" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            
-
-            <div class="spacerToggle">
-                <label for="windowTopSpacer">Show top spacer:</label> <input type="checkbox" ng-model="topSpacer" id="windowTopSpacer" />
-            </div>
             <div class="spacer" ng-show="topSpacer"></div>
 
             <div class="demo" ui-scrollpoint>
@@ -139,7 +226,7 @@
             <div class="scrollpoint-target" ui-scrollpoint-target>
                 <h2>Scrollpoint Target</h2>
                 
-                <div class="demo" ui-scrollpoint>
+                <div class="demo" ui-scrollpoint ui-scrollpoint-debug="targetBase1">
                     ui-scrollpoint
                 </div>
 
@@ -161,6 +248,61 @@
 
                 <br style="clear:both;"/>
                 <div class="spacer small"></div>
+
+                <div class="relative parent" ng-show="target.showRelative" ng-style="{left: target.showRelative ? target.relative.x + 'px' : '', top: target.showRelative ? target.relative.y + 'px' : '', width: target.showRelative?'90%':''}">
+                    <h4>relatively positioned parent <em>(inside ui-scrollpoint-target)</em></h4>
+
+                    <div class="demo" ui-scrollpoint ui-scrollpoint-enabled="{{target.showRelative}}">
+                        ui-scrollpoint
+                    </div>
+
+                    <div class="demo" ui-scrollpoint="25" ui-scrollpoint-enabled="{{target.showRelative}}">
+                        ui-scrollpoint="25"
+                    </div>
+
+                    <div class="demo" ui-scrollpoint="25%" ui-scrollpoint-enabled="{{target.showRelative}}">
+                        ui-scrollpoint="25%"
+                    </div>
+
+                    <div class="demo" ui-scrollpoint="-25" ui-scrollpoint-enabled="{{target.showRelative}}">
+                        ui-scrollpoint="-25"
+                    </div>
+
+                    <div class="demo" ui-scrollpoint="+25"ui-scrollpoint-enabled="{{target.showRelative}}">
+                        ui-scrollpoint="+25"
+                    </div>
+
+                    <br style="clear:both;"/>
+                </div>
+
+                <div class="absolute parent" ng-show="target.showAbsolute" ng-style="{left: target.showAbsolute ? target.absolute.x + 'px' : '', top: target.showAbsolute ? target.absolute.y + 'px' : ''}">
+                    <h4>absolutely positioned parent <em>(inside ui-scrollpoint-target)</em></h4>
+
+                    <div class="demo" ui-scrollpoint ui-scrollpoint-absolute="true" ui-scrollpoint-enabled="{{target.showAbsolute}}">
+                        ui-scrollpoint<br/>
+                        ui-scrollpoint-absolute="true"
+                    </div>
+
+                    <div class="demo" ui-scrollpoint="25" ui-scrollpoint-absolute="true" ui-scrollpoint-enabled="{{target.showAbsolute}}">
+                        ui-scrollpoint="25"<br/>
+                        ui-scrollpoint-absolute="true"
+                    </div>
+
+                    <div class="demo" ui-scrollpoint="25%" ui-scrollpoint-absolute="true" ui-scrollpoint-enabled="{{target.showAbsolute}}">
+                        ui-scrollpoint="25%"<br/>
+                        ui-scrollpoint-absolute="true"
+                    </div>
+
+                    <div class="demo" ui-scrollpoint="-25" ui-scrollpoint-absolute="true" ui-scrollpoint-enabled="{{target.showAbsolute}}">
+                        ui-scrollpoint="-25"<br/>
+                        ui-scrollpoint-absolute="true"
+                    </div>
+
+                    <div class="demo" ui-scrollpoint="+25" ui-scrollpoint-absolute="true" ui-scrollpoint-enabled="{{target.showAbsolute}}">
+                        ui-scrollpoint="+25"<br/>
+                        ui-scrollpoint-absolute="true"
+                    </div>
+                </div>
 
                 <div class="demo" ui-scrollpoint ui-scrollpoint-edge="bottom">
                     ui-scrollpoint<br/>
@@ -198,6 +340,57 @@
                 <div class="spacer small"></div>
             </div>
 
+            <div class="relative parent" ng-style="{left: shiftRelative ? relative.x + 'px' : '', top: shiftRelative ? relative.y + 'px' : '', width: shiftRelative?'90%':''}">
+                <h4>relatively positioned parent</h4>
+
+                <div class="demo" ui-scrollpoint>
+                    ui-scrollpoint
+                </div>
+
+                <div class="demo" ui-scrollpoint="25">
+                    ui-scrollpoint="25"
+                </div>
+
+                <div class="demo" ui-scrollpoint="25%">
+                    ui-scrollpoint="25%"
+                </div>
+
+                <div class="demo" ui-scrollpoint="-25">
+                    ui-scrollpoint="-25"
+                </div>
+
+                <div class="demo" ui-scrollpoint="+25">
+                    ui-scrollpoint="+25"
+                </div>
+                <br style="clear:both;"/>
+            </div>
+
+            <br style="clear:both;"/>
+
+            <div class="absolute parent" ng-show="showAbsolute" ng-style="{left: absolute.x + 'px', top: absolute.y + 'px'}">
+                <h4>absolutely positioned parent</h4>
+
+                <div class="demo" ui-scrollpoint ui-scrollpoint-enabled="{{showAbsolute}}">
+                    ui-scrollpoint
+                </div>
+
+                <div class="demo" ui-scrollpoint="25" ui-scrollpoint-enabled="{{showAbsolute}}">
+                    ui-scrollpoint="25"
+                </div>
+
+                <div class="demo" ui-scrollpoint="25%" ui-scrollpoint-enabled="{{showAbsolute}}">
+                    ui-scrollpoint="25%"
+                </div>
+
+                <div class="demo" ui-scrollpoint="-25" ui-scrollpoint-enabled="{{showAbsolute}}">
+                    ui-scrollpoint="-25"
+                </div>
+
+                <div class="demo" ui-scrollpoint="+25" ui-scrollpoint-enabled="{{showAbsolute}}">
+                    ui-scrollpoint="+25"
+                </div>
+            </div>
+
 
             <div class="demo" ui-scrollpoint ui-scrollpoint-edge="bottom">
                 ui-scrollpoint<br/>
@@ -226,7 +419,7 @@
             </div>
 
             <br style="clear:both;"/>
-            <div class="spacer small"></div>
+            <div class="spacer medium"></div>
         </section>
     </body>
 </html>

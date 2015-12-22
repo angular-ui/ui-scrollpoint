@@ -224,10 +224,14 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                     if(!current && angular.isDefined(this.posCache.top)){
                         return this.posCache.top;
                     }
-                    var top = this.$element[0].offsetTop;
+                    var bounds = this.$element[0].getBoundingClientRect();
+                    var top = bounds.top + this.getScrollOffset();
+
                     if(this.hasTarget){
-                        top -= this.$target[0].offsetTop;
+                        var targetBounds = this.$target[0].getBoundingClientRect();
+                        top -= targetBounds.top;
                     }
+
                     return top;
                 };
                 this.getElementBottom = function(current){
@@ -243,27 +247,55 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 var uiScrollpointTarget = Ctrl[1];
                 var ready = false;
                 var hit = false;
+                var absoluteParent = false;
 
                 uiScrollpoint.setElement(elm);
                 uiScrollpoint.setTarget( uiScrollpointTarget ? uiScrollpointTarget.$element : null);
 
+                // base ui-scrollpoint (leave blank or set to: absolute, +, -, or %)
                 attrs.$observe('uiScrollpoint', function(scrollpoint){
                     uiScrollpoint.setScrollpoint(scrollpoint);
                     onScroll();
                 });
 
+                // ui-scrollpoint-enabled allows disabling the scrollpoint
+                attrs.$observe('uiScrollpointEnabled', function(scrollpointEnabled){
+                    scrollpointEnabled = scope.$eval(scrollpointEnabled);
+                    if(scrollpointEnabled != uiScrollpoint.enabled){
+                        reset();
+                    }
+                    uiScrollpoint.enabled = scrollpointEnabled;
+                });
+
+                // ui-scrollpoint-absolute bypasses ui-scrollpoint-target
+                attrs.$observe('uiScrollpointAbsolute', function(scrollpointAbsolute){
+                    scrollpointAbsolute = scope.$eval(scrollpointAbsolute);
+                    if(scrollpointAbsolute != absoluteParent){
+                        if(uiScrollpoint.$target){
+                            uiScrollpoint.$target.off('scroll', onScroll);
+                        }
+                        uiScrollpoint.setTarget( (!scrollpointAbsolute && uiScrollpointTarget) ? uiScrollpointTarget.$element : null);
+                        resetTarget();
+                        reset();
+                    }
+                    absoluteParent = scrollpointAbsolute;
+                });
+
+                // ui-scrollpoint-action function name to use as scrollpoint callback
                 attrs.$observe('uiScrollpointAction', function(){
                     if(scope.uiScrollpointAction && angular.isFunction(scope.uiScrollpointAction)){
                         uiScrollpoint.addAction(scope.uiScrollpointAction());
                     }
                 });
 
+                // ui-scrollpoint-class class to add instead of ui-scrollpoint
                 attrs.$observe('uiScrollpointClass', function(scrollpointClass){
                     uiScrollpoint.setClass(scrollpointClass);
                     hit = false;
                     onScroll();
                 });
 
+                // ui-scrollpoint-edge allows configuring which element and scroll edges match
                 attrs.$observe('uiScrollpointEdge', function(scrollpointEdge){
                     if(scrollpointEdge){
                         // allowed un-$eval'ed values
@@ -335,13 +367,14 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                         onScroll();
                     });
                 }
+                function resetTarget() {
+                    uiScrollpoint.$target.on('scroll', onScroll);
+                    scope.$on('$destroy', function () {
+                        uiScrollpoint.$target.off('scroll', onScroll);
+                    });
+                }
+                resetTarget();
                 elm.ready(function(){ ready=true; onScroll(); });
-
-                uiScrollpoint.$target.on('scroll', onScroll);
-                scope.$on('$destroy', function () {
-                    uiScrollpoint.$target.off('scroll', onScroll);
-                });
-    
                 scope.$on('scrollpointShouldReset', reset);
             }
         };
