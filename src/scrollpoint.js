@@ -21,12 +21,6 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
         }
         return {
             require: ['uiScrollpoint', '^?uiScrollpointTarget'],
-            scope: {
-                uiScrollpoint: '@',
-                uiScrollpointClass: '@?',
-                uiScrollpointAction: '&?',
-                uiScrollpointEdge: '@'
-            },
             controller: function(){
                 this.$element = undefined;
                 this.$target = undefined;
@@ -252,9 +246,9 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                     onScroll();
                 });
 
-                attrs.$observe('uiScrollpointAction', function(){
-                    if(scope.uiScrollpointAction && angular.isFunction(scope.uiScrollpointAction)){
-                        uiScrollpoint.addAction(scope.uiScrollpointAction());
+                attrs.$observe('uiScrollpointAction', function(uiScrollpointAction){
+                    if(scope[uiScrollpointAction] && angular.isFunction(scope[uiScrollpointAction])){
+                        uiScrollpoint.addAction(scope[uiScrollpointAction]);
                     }
                 });
 
@@ -273,8 +267,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                             scrollpointEdge = scope.$eval(scrollpointEdge);
                         }
 
-                        // assign it on scope and in controller
-                        scope.uiScrollpointEdge = scrollpointEdge;
+                        // assign it in controller
                         uiScrollpoint.setEdges(scrollpointEdge);
                     }
                 });
