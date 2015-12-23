@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 2.0.0 - 2015-12-22T22:10:03.840Z
+ * Version: 2.0.0 - 2015-12-23T04:48:28.882Z
  * License: MIT
  */
 
@@ -31,12 +31,6 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
         }
         return {
             require: ['uiScrollpoint', '^?uiScrollpointTarget'],
-            scope: {
-                uiScrollpoint: '@',
-                uiScrollpointClass: '@?',
-                uiScrollpointAction: '&?',
-                uiScrollpointEdge: '@'
-            },
             controller: function(){
                 this.$element = undefined;
                 this.$target = undefined;
@@ -292,9 +286,9 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 });
 
                 // ui-scrollpoint-action function name to use as scrollpoint callback
-                attrs.$observe('uiScrollpointAction', function(){
-                    if(scope.uiScrollpointAction && angular.isFunction(scope.uiScrollpointAction)){
-                        uiScrollpoint.addAction(scope.uiScrollpointAction());
+                attrs.$observe('uiScrollpointAction', function(uiScrollpointAction){
+                    if(scope[uiScrollpointAction] && angular.isFunction(scope[uiScrollpointAction])){
+                        uiScrollpoint.addAction(scope[uiScrollpointAction]);
                     }
                 });
 
@@ -315,8 +309,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                             scrollpointEdge = scope.$eval(scrollpointEdge);
                         }
 
-                        // assign it on scope and in controller
-                        scope.uiScrollpointEdge = scrollpointEdge;
+                        // assign it in controller
                         uiScrollpoint.setEdges(scrollpointEdge);
                     }
                 });
