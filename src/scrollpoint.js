@@ -277,8 +277,9 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
 
                 // ui-scrollpoint-action function name to use as scrollpoint callback
                 attrs.$observe('uiScrollpointAction', function(uiScrollpointAction){
-                    if(scope[uiScrollpointAction] && angular.isFunction(scope[uiScrollpointAction])){
-                        uiScrollpoint.addAction(scope[uiScrollpointAction]);
+                    var action = scope.$eval(uiScrollpointAction);
+                    if(action && angular.isFunction(action)){
+                        uiScrollpoint.addAction(action);
                     }
                 });
 
