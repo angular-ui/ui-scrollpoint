@@ -1,7 +1,7 @@
 /*!
  * angular-ui-scrollpoint
  * https://github.com/angular-ui/ui-scrollpoint
- * Version: 2.0.1 - 2015-12-23T09:14:55.624Z
+ * Version: 2.0.2 - 2016-01-03T02:19:46.904Z
  * License: MIT
  */
 
@@ -287,8 +287,9 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
 
                 // ui-scrollpoint-action function name to use as scrollpoint callback
                 attrs.$observe('uiScrollpointAction', function(uiScrollpointAction){
-                    if(scope[uiScrollpointAction] && angular.isFunction(scope[uiScrollpointAction])){
-                        uiScrollpoint.addAction(scope[uiScrollpointAction]);
+                    var action = scope.$eval(uiScrollpointAction);
+                    if(action && angular.isFunction(action)){
+                        uiScrollpoint.addAction(action);
                     }
                 });
 
