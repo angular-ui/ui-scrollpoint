@@ -58,30 +58,21 @@
                     relative: { x: 15, y: 0 }
                 };
 
+                function resetScrollpoint(){
+                    $scope.$broadcast('scrollpointShouldReset');
+                }
+
                 // watch toggle controls
-                $scope.$watchGroup(['topSpacer', 'showAbsolute', 'shiftRelative', 'target.showAbsolute', 'target.showRelative'], 
-                    function(){
-                        $scope.$broadcast('scrollpointShouldReset');
-                    });
+                $scope.$watchGroup(['topSpacer', 'showAbsolute', 'shiftRelative', 'target.showAbsolute', 'target.showRelative'], resetScrollpoint);
 
                 // watch co-ordinate collections
-                $scope.$watchCollection('absolute', function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                });
-                $scope.$watchCollection('relative', function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                });
-                $scope.$watchCollection('target.absolute', function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                });
-                $scope.$watchCollection('target.relative', function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                });
+                $scope.$watchCollection('absolute', resetScrollpoint);
+                $scope.$watchCollection('relative', resetScrollpoint);
+                $scope.$watchCollection('target.absolute', resetScrollpoint);
+                $scope.$watchCollection('target.relative', resetScrollpoint);
 
                 // initialize
-                $timeout(function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                }, 10);
+                $timeout( resetScrollpoint, 10 );
                 
             });
         </script>
