@@ -180,6 +180,21 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                     }
                 };
 
+                this.getEdge = function(scroll_edge, element_edge){
+                    if(scroll_edge && element_edge){
+                        if(this.edges[scroll_edge] && this.edges[scroll_edge][element_edge]){
+                            return this.edges[scroll_edge][element_edge];
+                        }
+                    }
+                    else if(scroll_edge && !element_edge){
+                        if(this.edges[scroll_edge]){
+                            return this.edges[scroll_edge];
+                        }
+                        return;
+                    }
+                    return this.default_edge;
+                };
+
                 this.checkOffset = function(scroll_edge, elem_edge, edge){
                     var offset;
                     if(!edge){
@@ -228,45 +243,53 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 };
 
                 this.scrollEdgeHit = function(){
-                    var offset, hitEdge;
-                    var edge, absEdges;
-                    for(var scroll_edge in this.edges){
-                        for(var element_edge in this.edges[scroll_edge]){
-                            edge = (this.edges[scroll_edge][element_edge] ? this.edges[scroll_edge][element_edge] : this.default_edge);
+                    var offset, edgeHit, absEdges, absEdgeHits;
+                    var edge, scroll_edge, element_edge;
+                    absEdges = 0;
+                    absEdgeHits = {};
+                    for(scroll_edge in this.edges){
+                        for(element_edge in this.edges[scroll_edge]){
+                            edge = this.getEdge(scroll_edge, element_edge);
                             var edge_offset = this.checkOffset(scroll_edge, element_edge, edge);
 
                             if(edge.absolute){
-                                if(angular.isUndefined(absEdges)){
-                                    absEdges = {};
+                                if(angular.isUndefined(absEdgeHits)){
+                                    absEdgeHits = {};
                                 }
-                                absEdges[scroll_edge] = edge_offset;
+                                if(angular.isUndefined(absEdgeHits[scroll_edge])){
+                                    absEdgeHits[scroll_edge] = {};
+                                }
+                                absEdgeHits[scroll_edge][element_edge] = edge_offset;
+                                absEdges++;
                             }
                             else if(angular.isUndefined(offset) || edge_offset > offset){
                                 offset = edge_offset;
-                                hitEdge = scroll_edge;
+                                edgeHit = {scroll: scroll_edge, element: element_edge};
                             }
                         }
                     }
                     // special handling for absolute edges when no relative edges hit
-                    if(absEdges && !hitEdge){
+                    if(absEdges && !edgeHit){
                         // in case there is more than one absolute edge, they all should pass to count a hit (allows for creating ranges where the scrollpoint is active)
                         var allPass = true;
                         offset = undefined;
-                        for(edge in absEdges){
-                            if(absEdges[edge] < 0){
-                                allPass = false;
-                            }
-                            else if(angular.isUndefined(offset) || absEdges[edge] > offset){
-                                offset = absEdges[edge];
-                                hitEdge = edge;
+                        for(scroll_edge in absEdgeHits){
+                            for(element_edge in absEdgeHits[scroll_edge]){
+                                if(absEdges > 1 && absEdgeHits[scroll_edge][element_edge] < 0){
+                                    allPass = false;
+                                }
+                                else if(angular.isUndefined(offset) || absEdgeHits[scroll_edge][element_edge] > offset){
+                                    offset = absEdgeHits[scroll_edge][element_edge];
+                                    edgeHit = {scroll: scroll_edge, element: element_edge};
+                                }
                             }
                         }
                         if(!allPass){
-                            hitEdge = undefined;
+                            edgeHit = undefined;
                             offset = undefined;
                         }
                     }
-                    this.hitEdge = (offset >= 0) ? hitEdge : undefined;
+                    this.hitEdge = ((offset >= 0) ? edgeHit : undefined);
                     return offset;
                 };
 
@@ -378,8 +401,8 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 function onScroll() {
                     if(!ready || !uiScrollpoint.enabled){ return; }
 
-                    var hitEdge = uiScrollpoint.hitEdge; // which edge did scrollpoint trigger at before
                     var edgeHit = uiScrollpoint.scrollEdgeHit();
+                    var hitEdge = uiScrollpoint.hitEdge; // which edge did scrollpoint trigger at before
                     
                     // edgeHit >= 0 - scrollpoint is scrolled out of active view
                     // edgeHit < 0 - scrollpoint is in active view
@@ -416,7 +439,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                         // fire the actions
                         if(uiScrollpoint.actions){
                             for(var i in uiScrollpoint.actions){
-                                uiScrollpoint.actions[i](edgeHit, elm, uiScrollpoint.hitEdge || hitEdge);
+                                uiScrollpoint.actions[i](edgeHit, elm, (hitEdge ? hitEdge.scroll : undefined), (hitEdge ? hitEdge.element : undefined));
                             }
                         }
                     }
