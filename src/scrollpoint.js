@@ -26,7 +26,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                 this.$target = undefined;
                 this.hasTarget = false;
 
-                this.edges = { top: { top: null }}; // ui-scrollpoint on top edge of element with top edge of target
+                this.edges = { top: { top: true }}; // ui-scrollpoint on top edge of element with top edge of target
                 this.hitEdge = undefined;
 
                 this.default_edge = {
@@ -87,7 +87,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                                 for(edge in element_edge){
                                     // parse each element_edge definition (allows each element_edge to have its own scrollpoint with view_edge)
                                     if(element_edge[edge] === true){
-                                        element_edge[edge] = null; // use the ui-scrollpoint default
+                                        element_edge[edge] = true; // use the ui-scrollpoint default
                                     }
                                     else{
                                         element_edge[edge] = parseScrollpoint(element_edge[edge]);
@@ -103,7 +103,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
                             }
                             else if(element_edge === true){
                                 element_edge = {};
-                                element_edge[view_edge] = null; // use the ui-scrollpoint default
+                                element_edge[view_edge] = true; // use the ui-scrollpoint default
                             }
                             else{
                                 // element_edge matches view_edge (ie. top of element interacts with top of view)
@@ -182,7 +182,7 @@ angular.module('ui.scrollpoint', []).directive('uiScrollpoint', ['$window', '$ti
 
                 this.getEdge = function(scroll_edge, element_edge){
                     if(scroll_edge && element_edge){
-                        if(this.edges[scroll_edge] && this.edges[scroll_edge][element_edge]){
+                        if(this.edges[scroll_edge] && this.edges[scroll_edge][element_edge] && this.edges[scroll_edge][element_edge] !== true){
                             return this.edges[scroll_edge][element_edge];
                         }
                     }
