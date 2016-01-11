@@ -58,30 +58,21 @@
                     relative: { x: 15, y: 0 }
                 };
 
+                function resetScrollpoint(){
+                    $scope.$broadcast('scrollpointShouldReset');
+                }
+
                 // watch toggle controls
-                $scope.$watchGroup(['topSpacer', 'showAbsolute', 'shiftRelative', 'target.showAbsolute', 'target.showRelative'], 
-                    function(){
-                        $scope.$broadcast('scrollpointShouldReset');
-                    });
+                $scope.$watchGroup(['topSpacer', 'showAbsolute', 'shiftRelative', 'target.showAbsolute', 'target.showRelative'], resetScrollpoint);
 
                 // watch co-ordinate collections
-                $scope.$watchCollection('absolute', function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                });
-                $scope.$watchCollection('relative', function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                });
-                $scope.$watchCollection('target.absolute', function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                });
-                $scope.$watchCollection('target.relative', function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                });
+                $scope.$watchCollection('absolute', resetScrollpoint);
+                $scope.$watchCollection('relative', resetScrollpoint);
+                $scope.$watchCollection('target.absolute', resetScrollpoint);
+                $scope.$watchCollection('target.relative', resetScrollpoint);
 
                 // initialize
-                $timeout(function(){
-                    $scope.$broadcast('scrollpointShouldReset');
-                }, 10);
+                $timeout( resetScrollpoint, 10 );
                 
             });
         </script>
@@ -206,19 +197,26 @@
                 <span class="id">id="viewtrack-1"</span>
             </div>
 
-            <div class="demo" ui-scrollpoint="{{scrollpoint}}" ui-scrollpoint-action="reportScroll">
-                ui-scrollpoint="{{scrollpoint}}"<br/>
+            <div class="demo" ui-scrollpoint ui-scrollpoint-edge="{ top: '-25', bottom: '+25' }" ui-scrollpoint-action="reportScroll">
+                ui-scrollpoint<br/>
+                ui-scrollpoint-edge="{ top: '-25', bottom: '+25' }"<br/>
                 ui-scrollpoint-action="reportScroll"
             </div>
 
-            <div class="demo" ui-scrollpoint="{{scrollpoint}}" ui-scrollpoint-class="my-scrollpoint">
+            <div class="demo" ui-scrollpoint="{{scrollpoint}}" ui-scrollpoint-edge="['top', 'bottom']" ui-scrollpoint-class="my-scrollpoint">
                 ui-scrollpoint="{{scrollpoint}}"<br/>
+                ui-scrollpoint-edge="['top', 'bottom']"<br/>
                 ui-scrollpoint-class="my-scrollpoint"
             </div>
 
             <div class="demo" ui-scrollpoint="{{scrollpoint}}" ui-scrollpoint-class="ui-scrollpoint another-scrollpoint">
                 ui-scrollpoint="{{scrollpoint}}"<br/>
                 ui-scrollpoint-class="ui-scrollpoint another-scrollpoint"
+            </div>
+
+            <div class="demo" ui-scrollpoint ui-scrollpoint-edge="{ top: '25%', bottom: '70%' }">
+                ui-scrollpoint<br/>
+                ui-scrollpoint-edge="{ top: '25%', bottom: '70%' }"
             </div>
 
             <br style="clear:both;"/>
@@ -391,7 +389,6 @@
                 </div>
             </div>
 
-
             <div class="demo" ui-scrollpoint ui-scrollpoint-edge="bottom">
                 ui-scrollpoint<br/>
                 ui-scrollpoint-edge="bottom"
@@ -416,6 +413,28 @@
                 ui-scrollpoint="+25"<br/>
                 ui-scrollpoint-edge="bottom"<br/>
                 ui-scrollpoint-action="reportScroll"
+            </div>
+
+            <div class="demo" ui-scrollpoint ui-scrollpoint-edge="bottom">
+                ui-scrollpoint<br/>
+                ui-scrollpoint-edge="bottom"
+            </div>
+
+            <div class="demo" ui-scrollpoint ui-scrollpoint-edge="{ top: '-25', bottom: '+25' }">
+                ui-scrollpoint<br/>
+                ui-scrollpoint-edge="{ top: '-25', bottom: '+25' }"
+            </div>
+
+            <div class="demo" ui-scrollpoint="{{scrollpoint}}" ui-scrollpoint-edge="['bottom', 'top']" ui-scrollpoint-class="my-scrollpoint">
+                ui-scrollpoint="{{scrollpoint}}"<br/>
+                ui-scrollpoint-edge="['bottom', 'top']"<br/>
+                ui-scrollpoint-class="my-scrollpoint"
+            </div>
+
+            <div class="demo" ui-scrollpoint="{{scrollpoint}}" ui-scrollpoint-edge="bottom" ui-scrollpoint-class="ui-scrollpoint another-scrollpoint">
+                ui-scrollpoint="{{scrollpoint}}"<br/>
+                ui-scrollpoint-edge="bottom"<br/>
+                ui-scrollpoint-class="ui-scrollpoint another-scrollpoint"
             </div>
 
             <br style="clear:both;"/>
