@@ -28,6 +28,13 @@ Add the specific module to your dependencies:
 angular.module('myApp', ['ui.scrollpoint', ...])
 ```
 
+Alternatively, include it via CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/angular@1/angular.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/angular-ui-scrollpoint@2/dist/scrollpoint.min.js"></script>
+```
+
 ## Development
 
 We use Karma and jshint to ensure the quality of the code.  The easiest way to run these checks is to use grunt:
